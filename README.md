@@ -1,2 +1,2 @@
-# uriInJava
- Codes of all the problems that I have solved in URI Online Judge using Java
+# MyOnlineJudgeSolutions
+ Codes of all the problems that I have solved in various Online Judge websites.
