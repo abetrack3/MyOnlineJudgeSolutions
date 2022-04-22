@@ -26,6 +26,8 @@ def code_forces(description):
         doc = BeautifulSoup(requests.get(link).text, 'html.parser')
 
     problem_title = doc.find('div', {'class': 'title'}).contents[0]
+    codeforces_round = doc.find('a' , {'href' : f'/contest/{contest_no}'}).text
+    # print(codeforces_round)
 
     # git add
     command_git_add = f'git add CodeForces/CodeForces{description[1]}.{description[2]}'
@@ -35,7 +37,7 @@ def code_forces(description):
     
     # git commit
     message = f'CodeForces{description[1]}: {problem_title}'
-    message_description = f'CodeForces{description[1]}: {problem_title}\nLink to the problem: {link}'
+    message_description = f'{message}\n{codeforces_round}\nLink to the problem: {link}'
     command_git_commit = f'git commit -m "{message}" -m "{message_description}"'
     print(command_git_commit)
     os.popen(command_git_commit)
