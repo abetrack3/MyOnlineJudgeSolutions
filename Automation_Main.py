@@ -1,6 +1,7 @@
 import os
 import re
 
+from Automation_CodeChef import code_chef
 from Automation_CodeForces import code_forces
 from Automation_HackerRank import hacker_rank
 from Automation_LeetCode import leet_code
@@ -17,7 +18,8 @@ def __main__():
     judge_map = {
         'LeetCode': leet_code,
         'CodeForces': code_forces,
-        'HackerRank': hacker_rank
+        'HackerRank': hacker_rank,
+        'CodeChef': code_chef
     }
     judge_list = judge_map.keys()
 
