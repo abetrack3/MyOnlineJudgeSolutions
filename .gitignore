@@ -4,3 +4,7 @@
 chromedriver
 
 __pycache__/
+
+.vscode/
+
+.idea/
