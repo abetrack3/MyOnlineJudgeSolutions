@@ -7,20 +7,22 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 
 
 def code_forces(description, driver: WebDriver):
+    driver.get('https://codeforces.com')
     contest_no, problem = re.findall('([0-9]+)([A-Z])', description[1])[0]
     link = f'https://codeforces.com/contest/{contest_no}/problem/{problem}'
 
     driver.get(link)
     doc = BeautifulSoup(driver.page_source, 'html.parser')
 
+    problem_type = 'contest'
     if doc.title.string == 'Codeforces':
         link = f'https://codeforces.com/gym/{contest_no}/problem/{problem}'
         driver.get(link)
         doc = BeautifulSoup(driver.page_source, 'html.parser')
+        problem_type = 'gym'
 
     problem_title = doc.find('div', {'class': 'title'}).contents[0]
-    codeforces_round = doc.find('a', {'href': f'/contest/{contest_no}'}).text
-    # print(codeforces_round)
+    codeforces_round = doc.find('a', {'href': f'/{problem_type}/{contest_no}'}).text
 
     # git add
     command_git_add = f'git add CodeForces/CodeForces{description[1]}.{description[2]}'

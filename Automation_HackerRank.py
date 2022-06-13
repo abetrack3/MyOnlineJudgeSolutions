@@ -21,6 +21,7 @@ def hacker_rank(description, driver: WebDriver):
         question_title = elem.text
     except TimeoutException:
         print("Loading took too much time!")
+        print(description)
         return
     print(question_title)
 

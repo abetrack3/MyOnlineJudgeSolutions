@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 from Automation_CodeChef import code_chef
 from Automation_CodeForces import code_forces
@@ -37,9 +38,14 @@ def __main__():
 
     for file in files:
         judge_map[file[0]](file, chromeDriver)
-    chromeDriver.close()
-    chromeDriver.quit()
 
 
 if __name__ == '__main__':
-    __main__()
+    try:
+        __main__()
+    except Exception:
+        sys.stderr.write('Error Occurred')
+        sys.stderr.flush()
+    finally:
+        chromeDriver.close()
+        chromeDriver.quit()

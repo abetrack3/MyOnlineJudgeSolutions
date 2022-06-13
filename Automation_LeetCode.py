@@ -22,6 +22,7 @@ def leet_code(description, driver: WebDriver):
         question_title = elem.text
     except TimeoutException:
         print("Loading took too much time!")
+        print(description)
         return
     question_title = 'LeetCode ' + question_title
     print(question_title)
