@@ -1,0 +1,1 @@
+for i in range(int(input())): print("52\n" + "DL"*24 + "RRUU")
