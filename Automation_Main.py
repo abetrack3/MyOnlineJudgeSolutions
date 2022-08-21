@@ -6,6 +6,7 @@ from Automation_CodeChef import code_chef
 from Automation_CodeForces import code_forces
 from Automation_HackerRank import hacker_rank
 from Automation_LeetCode import leet_code
+from Automation_LightOJ import light_oj
 from SeleniumWebDriver import WebDriverFactory
 
 ###################### Global Script Variables ######################
@@ -20,7 +21,8 @@ def __main__():
         'LeetCode': leet_code,
         'CodeForces': code_forces,
         'HackerRank': hacker_rank,
-        'CodeChef': code_chef
+        'CodeChef': code_chef,
+        'LightOJ': light_oj
     }
     judge_list = judge_map.keys()
 
@@ -38,13 +40,15 @@ def __main__():
 
     for file in files:
         judge_map[file[0]](file, chromeDriver)
+        # break
 
 
 if __name__ == '__main__':
     try:
         __main__()
-    except Exception:
+    except Exception as e:
         sys.stderr.write('Error Occurred')
+        sys.stderr.write(str(e))
         sys.stderr.flush()
     finally:
         chromeDriver.close()
