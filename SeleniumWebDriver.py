@@ -1,6 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
+PAGE_LOAD_TIMEOUT = 120
+
+
 class WebDriverFactory:
     @staticmethod
     def __get_configurations__():
@@ -26,6 +29,7 @@ class WebDriverFactory:
         if headless:
             options = WebDriverFactory.__get_configurations__()
             chrome_driver = webdriver.Chrome(service=Service(path), options=options)
+            chrome_driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
             return chrome_driver
         else:
             chrome_driver = webdriver.Chrome(service=Service(path))
