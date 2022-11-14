@@ -1,5 +1,13 @@
+import re
+from typing import Optional
+
 from selenium import webdriver
+from selenium.common import SessionNotCreatedException
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.webdriver import WebDriver
+
+from ChromeDriverUpdater import ChromeDriverUpdater
 
 PAGE_LOAD_TIMEOUT = 120
 
@@ -26,12 +34,29 @@ class WebDriverFactory:
 
     @staticmethod
     def get_driver(path: str, headless: bool = False):
-        if headless:
-            options = WebDriverFactory.__get_configurations__()
-            chrome_driver = webdriver.Chrome(service=Service(path), options=options)
-            chrome_driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
-            return chrome_driver
-        else:
-            chrome_driver = webdriver.Chrome(service=Service(path))
+
+        options: Options = WebDriverFactory.__get_configurations__() if headless else None
+        chrome_driver: Optional[WebDriver] = WebDriverFactory.__get_driver_instance__(
+            service=Service(path),
+            options=options
+        )
+
+        if chrome_driver is None:
+            raise Exception('Failed to load driver')
+
+        if not headless:
             chrome_driver.maximize_window()
+
+        chrome_driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
+
+        return chrome_driver
+
+    @staticmethod
+    def __get_driver_instance__(service: Service, options: Options) -> WebDriver:
+        try:
+            chrome_driver = webdriver.Chrome(service=service, options=options)
+            return chrome_driver
+        except SessionNotCreatedException as caught_exception:
+            ChromeDriverUpdater.update_driver(caught_exception)
+            chrome_driver = webdriver.Chrome(service=service, options=options)
             return chrome_driver
