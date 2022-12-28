@@ -7,6 +7,7 @@ from Automations.Automation_CodeForces import code_forces
 from Automations.Automation_HackerRank import hacker_rank
 from Automations.Automation_LeetCode import leet_code
 from Automations.Automation_LightOJ import light_oj
+from Automations.Automation_SphereOJ import sphere_oj
 from Automations.SeleniumWebDriver import WebDriverFactory
 
 ###################### Global Script Variables ######################
@@ -22,7 +23,8 @@ def __main__():
         'CodeForces': code_forces,
         'HackerRank': hacker_rank,
         'CodeChef': code_chef,
-        'LightOJ': light_oj
+        'LightOJ': light_oj,
+        'SPOJ': sphere_oj
     }
     judge_list = judge_map.keys()
 
