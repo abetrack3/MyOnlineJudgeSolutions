@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.webdriver import WebDriver
 
-from ChromeDriverUpdater import ChromeDriverUpdater
+from Automations.ChromeDriverUpdater import ChromeDriverUpdater
 
 PAGE_LOAD_TIMEOUT = 120
 
