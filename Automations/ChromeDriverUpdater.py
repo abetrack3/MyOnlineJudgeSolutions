@@ -8,7 +8,7 @@ from selenium.common import SessionNotCreatedException
 
 
 CHROME_DRIVER_ZIP_FILENAME = 'driver.zip'
-CHROME_DRIVER_BINARY_FILENAME = 'chromedriver'
+CHROME_DRIVER_BINARY_FILENAME = '../chromedriver'
 CHROME_DRIVER_BACKUP_FILENAME = 'chromedriver.bak'
 CHROME_DRIVER_ZIP_DOWNLOAD_URL_TEMPLATE = 'https://chromedriver.storage.googleapis.com/{}/chromedriver_linux64.zip'
 OLD_CHROMEDRIVER_ERROR_MESSAGE_PATTERN = r'''.*This version of ChromeDriver only supports Chrome version \d+

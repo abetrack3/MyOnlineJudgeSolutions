@@ -28,7 +28,7 @@ def light_oj(description, driver: WebDriver):
     print(question_title)
 
     # Getting the original problem link
-    temp_driver = WebDriverFactory.get_driver('./chromedriver', headless=True)
+    temp_driver = WebDriverFactory.get_driver('../chromedriver', headless=True)
     temp_driver.get(f'{vjudge_link}/origin')
     # temp_driver.get(f'http://lightoj.com/volume_showproblem.php?problem={description[1]}')
     # driver
