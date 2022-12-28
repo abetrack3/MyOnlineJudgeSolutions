@@ -2,12 +2,12 @@ import os
 import re
 import sys
 
-from Automation_CodeChef import code_chef
-from Automation_CodeForces import code_forces
-from Automation_HackerRank import hacker_rank
-from Automation_LeetCode import leet_code
-from Automation_LightOJ import light_oj
-from SeleniumWebDriver import WebDriverFactory
+from Automations.Automation_CodeChef import code_chef
+from Automations.Automation_CodeForces import code_forces
+from Automations.Automation_HackerRank import hacker_rank
+from Automations.Automation_LeetCode import leet_code
+from Automations.Automation_LightOJ import light_oj
+from Automations.SeleniumWebDriver import WebDriverFactory
 
 ###################### Global Script Variables ######################
 
