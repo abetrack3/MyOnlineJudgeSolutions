@@ -12,7 +12,7 @@ from Automations.SeleniumWebDriver import WebDriverFactory
 
 ###################### Global Script Variables ######################
 
-chromeDriver = WebDriverFactory.get_driver('./chromedriver', headless=True)
+chromeDriver = WebDriverFactory.get_driver('chromedriver', headless=True)
 
 
 ################## Automation Main Controller ##################
