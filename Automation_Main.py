@@ -32,7 +32,7 @@ def __main__():
 
     command_result = os.popen(command_git_status)
 
-    pattern = f'({"|".join(judge_list)})-?([A-Za-z0-9\-]+)\.(java|cpp|py|c|js)$'
+    pattern = f'({"|".join(judge_list)})-?([A-Za-z0-9\-_]+)\.(java|cpp|py|c|js)$'
 
     files = []
     for file in command_result.readlines():
