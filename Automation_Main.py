@@ -26,6 +26,7 @@ def __main__():
         'LightOJ': light_oj,
         'SPOJ': sphere_oj
     }
+
     judge_list = judge_map.keys()
 
     command_git_status = 'git status --untracked-files'
@@ -35,6 +36,7 @@ def __main__():
     pattern = f'({"|".join(judge_list)})-?([A-Za-z0-9\-_]+)\.(java|cpp|py|c|js)$'
 
     files = []
+
     for file in command_result.readlines():
         res = re.findall(pattern, file)
         if len(res) > 0:
