@@ -33,12 +33,12 @@ def __main__():
 
     command_result = os.popen(command_git_status)
 
-    pattern = f'({"|".join(judge_list)})-?([A-Za-z0-9\-_]+)\.(java|cpp|py|c|js)$'
+    solution_file_name_pattern = f'({"|".join(judge_list)})-?([A-Za-z0-9\-_]+)\.(java|cpp|py|c|js)$'
 
     files = []
 
     for file in command_result.readlines():
-        res = re.findall(pattern, file)
+        res = re.findall(solution_file_name_pattern, file)
         if len(res) > 0:
             files.append(res[0])
 
