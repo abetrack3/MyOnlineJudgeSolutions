@@ -8,6 +8,7 @@ from Automations.Automation_HackerRank import hacker_rank
 from Automations.Automation_LeetCode import leet_code
 from Automations.Automation_LightOJ import light_oj
 from Automations.Automation_SphereOJ import sphere_oj
+from Automations.Automation_UVA import uva_online_judge
 from Automations.SeleniumWebDriver import WebDriverFactory
 
 ###################### Global Script Variables ######################
@@ -18,13 +19,15 @@ chromeDriver = WebDriverFactory.get_driver('./chromedriver', headless=False)
 ################## Automation Main Controller ##################
 
 def __main__():
+
     judge_map = {
         'LeetCode': leet_code,
         'CodeForces': code_forces,
         'HackerRank': hacker_rank,
         'CodeChef': code_chef,
         'LightOJ': light_oj,
-        'SPOJ': sphere_oj
+        'SPOJ': sphere_oj,
+        'UVA': uva_online_judge,
     }
 
     judge_list = judge_map.keys()
