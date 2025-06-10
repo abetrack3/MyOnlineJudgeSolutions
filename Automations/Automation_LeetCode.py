@@ -18,7 +18,7 @@ def leet_code(description, driver: WebDriver):
     driver.get(link)
     try:
         elem = WebDriverWait(driver, DELAY_TIMEOUT).until(
-            EC.presence_of_element_located((By.XPATH, f'//*/span[@class="mr-2 text-lg font-medium text-label-1 dark:text-dark-label-1"]')))
+            EC.presence_of_element_located((By.XPATH, f'//*/div[contains(@class, \'text-title-large\')]/a')))
         question_title = elem.text
     except TimeoutException:
         print("Loading took too much time!")
