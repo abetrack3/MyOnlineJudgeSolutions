@@ -1,16 +1,25 @@
 import os
 import re
+import json
+import shutil
+import requests
+from typing import Dict
 from zipfile import ZipFile
 
-import requests
-from bs4 import BeautifulSoup
+from tqdm import tqdm
 from selenium.common import SessionNotCreatedException
 
+from Automations.utils.common_utils import get_platform, get_chrome_version
+from Automations.utils.io_utils import copy_file
+from Automations.utils.driver_utils import get_driver_binary_file_extension
 
 CHROME_DRIVER_ZIP_FILENAME = 'driver.zip'
-CHROME_DRIVER_BINARY_FILENAME = '../chromedriver'
+CHROME_DRIVER_BINARY_FILENAME = f'chromedriver.{get_driver_binary_file_extension()}'
 CHROME_DRIVER_BACKUP_FILENAME = 'chromedriver.bak'
-CHROME_DRIVER_ZIP_DOWNLOAD_URL_TEMPLATE = 'https://chromedriver.storage.googleapis.com/{}/chromedriver_linux64.zip'
+CHROME_DRIVER_ZIP_EXTRACTED_DIRECTORY_PATH = f'chromedriver-{get_platform()}'
+CHROME_DRIVER_ZIP_EXTRACTED_BINARY_FILE_PATH = f'{CHROME_DRIVER_ZIP_EXTRACTED_DIRECTORY_PATH}/chromedriver.{get_driver_binary_file_extension()}'
+CHROME_ALL_VERSION_LIST_URL = ('https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with'
+                               '-downloads.json')
 OLD_CHROMEDRIVER_ERROR_MESSAGE_PATTERN = r'''.*This version of ChromeDriver only supports Chrome version \d+
 Current browser version is (\d+).*'''
 
@@ -18,11 +27,17 @@ Current browser version is (\d+).*'''
 class ChromeDriverUpdater:
 
     @staticmethod
-    def update_driver(caught_exception: SessionNotCreatedException):
+    def update_driver(caught_exception: SessionNotCreatedException) -> None:
         error_message = caught_exception.msg
         if ChromeDriverUpdater.__old_chrome_driver_error__(error_message):
             target_chrome_driver_version = ChromeDriverUpdater.__get_target_chrome_driver_version(error_message)
-            ChromeDriverUpdater.__update_chrome_driver__(target_chrome_driver_version)
+            ChromeDriverUpdater.__download_latest_driver_for_version__(target_chrome_driver_version)
+
+    @staticmethod
+    def download_driver() -> None:
+        chrome_version = '.'.join(get_chrome_version().split('.')[0:3])
+        print(f'Chrome version: {chrome_version}')
+        ChromeDriverUpdater.__download_latest_driver_for_version__(chrome_version)
 
     @staticmethod
     def __old_chrome_driver_error__(error_message: str) -> bool:
@@ -36,29 +51,64 @@ class ChromeDriverUpdater:
         return target_version
 
     @staticmethod
-    def __update_chrome_driver__(target_version: str):
-
+    def __download_latest_driver_for_version__(target_version: str) -> None:
         ChromeDriverUpdater.__remove_temporary_files_if_exist()
         ChromeDriverUpdater.__create_backup_of_current_chrome_driver_binary()
 
-        response_download_page = requests.request(method='GET', url='https://chromedriver.chromium.org/downloads')
-        document = BeautifulSoup(response_download_page.text, features='lxml')
-        anchor_tag_list = document.find_all(name='a', recursive=True)
-        anchor_tag_list = [
-            each_anchor_tag
-            for each_anchor_tag in anchor_tag_list
-            if each_anchor_tag.text.startswith(f'ChromeDriver {target_version}')
+        all_chrome_version_information = json.loads(requests.get(url=CHROME_ALL_VERSION_LIST_URL).text)
+
+        available_target_versions = [
+            each_chrome_version
+            for each_chrome_version in all_chrome_version_information['versions']
+            if each_chrome_version['version'].startswith(target_version)
         ]
-        full_version = anchor_tag_list[0].text.split()[-1]  # choosing the first result from search and filter
-        chrome_driver_zip_download_url = CHROME_DRIVER_ZIP_DOWNLOAD_URL_TEMPLATE.format(full_version)
-        chrome_driver_zip_download_response = requests.request(method='GET', url=chrome_driver_zip_download_url)
-        with open(CHROME_DRIVER_ZIP_FILENAME, 'wb') as driver_zip_file:
-            driver_zip_file.write(chrome_driver_zip_download_response.content)
-            driver_zip_file.flush()
-            driver_zip_file.close()
+
+        latest_available_target_version = available_target_versions[-1]
+
+        chrome_driver_urls: Dict[str, str] = latest_available_target_version['downloads']['chromedriver']
+
+        platform: str = get_platform()
+
+        chrome_driver_zip_download_url: str = next(filter(lambda x: x['platform'] == platform,
+                                                          chrome_driver_urls))['url']
+
+        ChromeDriverUpdater.__download_chrome_driver_zip(chrome_driver_zip_download_url)
 
         ChromeDriverUpdater.__extract_driver_zip_file()
+
+        copy_file(CHROME_DRIVER_ZIP_EXTRACTED_BINARY_FILE_PATH, CHROME_DRIVER_BINARY_FILENAME)
+
         ChromeDriverUpdater.__remove_temporary_files_if_exist()
+
+    @staticmethod
+    def __download_chrome_driver_zip(driver_url: str) -> None:
+
+        try:
+
+            response = requests.get(driver_url, stream=True)
+
+            response.raise_for_status()
+
+            file_size = int(response.headers.get('Content-Length', 0))
+
+            progress_bar = tqdm(desc='Downloading Chrome Driver', total=file_size, unit='B', unit_scale=True)
+
+            with open(CHROME_DRIVER_ZIP_FILENAME, 'wb') as driver_zip_file:
+
+                for chunk in response.iter_content(chunk_size=1024):
+                    driver_zip_file.write(chunk)
+
+                    progress_bar.update(len(chunk))
+
+            progress_bar.close()
+
+        except requests.exceptions.RequestException as e:
+
+            print(f'Download failed: {e}')
+
+        except Exception as e:
+
+            print(f'An error occurred: {e}')
 
     @staticmethod
     def __remove_temporary_files_if_exist():
@@ -69,8 +119,15 @@ class ChromeDriverUpdater:
         if os.path.exists(CHROME_DRIVER_BACKUP_FILENAME):
             os.remove(CHROME_DRIVER_BACKUP_FILENAME)
 
+        if os.path.exists(CHROME_DRIVER_ZIP_EXTRACTED_DIRECTORY_PATH):
+            shutil.rmtree(CHROME_DRIVER_ZIP_EXTRACTED_DIRECTORY_PATH)
+
     @staticmethod
     def __create_backup_of_current_chrome_driver_binary():
+
+        if not os.path.exists(CHROME_DRIVER_BINARY_FILENAME):
+            print(f'{CHROME_DRIVER_BINARY_FILENAME} does not exist')
+            return
 
         chrome_driver_binary = open(CHROME_DRIVER_BINARY_FILENAME, 'rb').read()
         with open(CHROME_DRIVER_BACKUP_FILENAME, 'wb') as backup_chrome_driver:
@@ -81,5 +138,5 @@ class ChromeDriverUpdater:
     @staticmethod
     def __extract_driver_zip_file():
 
-        with ZipFile(CHROME_DRIVER_ZIP_FILENAME, 'r') as driver_zip_file:
+        with ZipFile(CHROME_DRIVER_ZIP_FILENAME) as driver_zip_file:
             driver_zip_file.extractall()

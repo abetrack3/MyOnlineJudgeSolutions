@@ -8,6 +8,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from Automations.SeleniumWebDriver import WebDriverFactory
+from Automations.utils.driver_utils import get_driver_binary_file_extension
 
 DELAY_TIMEOUT = 10
 
@@ -28,7 +29,7 @@ def light_oj(description, driver: WebDriver):
     print(question_title)
 
     # Getting the original problem link
-    temp_driver = WebDriverFactory.get_driver('../chromedriver', headless=True)
+    temp_driver = WebDriverFactory.get_driver(f'../chromedriver.{get_driver_binary_file_extension()}', headless=True)
     temp_driver.get(f'{vjudge_link}/origin')
     # temp_driver.get(f'http://lightoj.com/volume_showproblem.php?problem={description[1]}')
     # driver

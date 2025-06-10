@@ -10,10 +10,11 @@ from Automations.Automation_LightOJ import light_oj
 from Automations.Automation_SphereOJ import sphere_oj
 from Automations.Automation_UVA import uva_online_judge
 from Automations.SeleniumWebDriver import WebDriverFactory
+from Automations.utils.driver_utils import get_driver_binary_file_extension
 
 ###################### Global Script Variables ######################
 
-chromeDriver = WebDriverFactory.get_driver('./chromedriver', headless=False)
+chromeDriver = WebDriverFactory.get_driver(f'./chromedriver.{get_driver_binary_file_extension()}', headless=False)
 
 
 ################## Automation Main Controller ##################
@@ -36,7 +37,7 @@ def __main__():
 
     command_result = os.popen(command_git_status)
 
-    solution_file_name_pattern = f'({"|".join(judge_list)})-?([A-Za-z0-9\-_]+)\.(java|cpp|py|c|js)$'
+    solution_file_name_pattern = f'({"|".join(judge_list)})-?([A-Za-z0-9\\-_]+)\\.(java|cpp|py|c|js)$'
 
     files = []
 
