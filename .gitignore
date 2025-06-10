@@ -1,7 +1,14 @@
 
 .DS_Store
 
-chromedriver
+chromedriver*
+driver.zip
+chromedriver.bak
+chromedriver-linux64/
+chromedriver-mac-arm64/
+chromedriver-mac-x64/
+chromedriver-win32/
+chromedriver-win64/
 
 __pycache__/
 
